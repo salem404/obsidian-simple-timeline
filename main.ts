@@ -34,7 +34,7 @@ export default class SimpleTimelinePlugin extends Plugin {
 				listItem.findAll('p').forEach((pElement) => {
 					pElement.childNodes.forEach((child) => {
 						if (child instanceof Text) {
-							const result = this.processTextNode(child, ctx.sourcePath, previousElDateTime);
+							const result = this.processTextNode(child, ctx.sourcePath, previousElDateTime, pElement);
 							if (result) {
 								previousElDateTime = result;
 							} else {
@@ -55,7 +55,7 @@ export default class SimpleTimelinePlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
-	private processTextNode(child: Text, sourcePath: string, previousElDateTime: string | null): string | null {
+	private processTextNode(child: Text, sourcePath: string, previousElDateTime: string | null, pElement?: HTMLElement): string | null {
 		const match = extractDateTime(child.textContent || '', this.settings, sourcePath);
 		if (match.dateTime) {
 			const { 
@@ -83,7 +83,8 @@ export default class SimpleTimelinePlugin extends Plugin {
 					hasQuestionMark,
 					questionMarkPosition,
 					isApproximate,
-					approximatePrefix
+					approximatePrefix,
+					pElement
 				});
 			}
 
