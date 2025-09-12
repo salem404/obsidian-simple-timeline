@@ -146,6 +146,14 @@ describe('extractDateTime', () => {
       expect(result.startTime).toBe('2024-12-31 9:00');
       expect(result.endTime).toBe('2024-12-31 17:00');
     });
+
+    it('Should handle time ranges with question mark', () => {
+      const result = extractDateTime('14:00 - 16:00? Uncertain break', settings, '/path/to/2024-12-31-notes.md');
+      expect(result.modifiedText).toBe('Uncertain break');
+      expect(result.isTimeRange).toBe(true);
+      expect(result.hasQuestionMark).toBe(true);
+      expect(result.questionMarkPosition).toBe('end');
+    });
   });
 
   describe('When enableTimeOnlyWithColon is true and file has date in name', () => {
@@ -183,6 +191,54 @@ describe('extractDateTime', () => {
       const { modifiedText, dateTime } = extractDateTime('16:00 This is a test', settings, '/path/to/notes.md');
       expect(modifiedText).toBe('16:00 This is a test');
       expect(dateTime).toBe(null);
+    });
+  });
+
+  // New tests for datetime ranges
+  describe('When enableDateTimeWithColon is true', () => {
+    const settings: SimpleTimelineSettings = { ...defaultTestSettings, enableDateTimeWithColon: true };
+    
+    it('Should handle datetime ranges', () => {
+      const result = extractDateTime('2020-10-10 14:00 - 2020-10-10 16:00 Meeting', settings);
+      expect(result.modifiedText).toBe('Meeting');
+      expect(result.dateTime).toBe('2020-10-10 14:00');
+      expect(result.isDateTimeRange).toBe(true);
+      expect(result.startTime).toBe('2020-10-10 14:00');
+      expect(result.endTime).toBe('2020-10-10 16:00');
+    });
+
+    it('Should handle datetime ranges with question mark', () => {
+      const result = extractDateTime('2020-10-10 14:00 - 2020-10-10 16:00? Uncertain meeting', settings);
+      expect(result.modifiedText).toBe('Uncertain meeting');
+      expect(result.hasQuestionMark).toBe(true);
+      expect(result.questionMarkPosition).toBe('end');
+    });
+
+    it('Should handle date with question mark', () => {
+      const result = extractDateTime('2020-10-10? Something happened', settings);
+      expect(result.modifiedText).toBe('Something happened');
+      expect(result.dateTime).toBe('2020-10-10');
+      expect(result.hasQuestionMark).toBe(true);
+    });
+  });
+
+  // New tests for approximate times
+  describe('When approximate prefix is used', () => {
+    const settings: SimpleTimelineSettings = { ...defaultTestSettings, enableDateTimeWithColon: true };
+    
+    it('Should handle approximate dates', () => {
+      const result = extractDateTime('~ 2020-10-10 Something happened around this time', settings);
+      expect(result.modifiedText).toBe('Something happened around this time');
+      expect(result.dateTime).toBe('2020-10-10');
+      expect(result.isApproximate).toBe(true);
+      expect(result.approximatePrefix).toBe('~ ');
+    });
+
+    it('Should handle approximate datetime', () => {
+      const result = extractDateTime('~ 2020-10-10 14:30 Meeting was around this time', settings);
+      expect(result.modifiedText).toBe('Meeting was around this time');
+      expect(result.dateTime).toBe('2020-10-10 14:30');
+      expect(result.isApproximate).toBe(true);
     });
   });
 });

@@ -13,6 +13,7 @@ This plugin will look for text formatted in various datetime formats that you ca
 ```markdown
 - YYYY-MM-DD: <Any text>        (optional)
 - YYYY-MM-DD <Any text>         (optional)
+- YYYY-MM-DD? <Any text>        (question mark shown as span)
 ```
 
 **DateTime formats:**
@@ -20,22 +21,35 @@ This plugin will look for text formatted in various datetime formats that you ca
 ```markdown
 - YYYY-MM-DD HH:MM: <Any text>  (enabled by default)
 - YYYY-MM-DD HH:MM <Any text>   (optional)
+- YYYY-MM-DD HH:MM? <Any text>  (question mark shown as span)
+- YYYY-MM-DD HH:MM - YYYY-MM-DD HH:MM <Any text>  (datetime ranges)
+- YYYY-MM-DD HH:MM - YYYY-MM-DD HH:MM? <Any text> (ranges with question mark)
 ```
 
 **Time-only formats** (require file name to contain a date like `2024-12-31-notes.md`):
 
 ```markdown
 - HH:MM: <Any text>             (enabled by default)
-- HH:MM? <Any text>             (enabled by default, wrapped in div)
+- HH:MM? <Any text>             (enabled by default, question mark shown as span)
 - HH:MM <Any text>              (enabled by default)
 - HH:MM - HH:MM <Any text>      (time ranges, wrapped in div)
+- HH:MM - HH:MM? <Any text>     (time ranges with question mark)
+```
+
+**Approximate times:**
+
+```markdown
+- ~ YYYY-MM-DD <Any text>       (approximate date)
+- ~ YYYY-MM-DD HH:MM <Any text> (approximate datetime)
 ```
 
 **Note:**
 
 - Single-digit hours are supported (e.g., `5:09`, `0:17`)
-- Time ranges like `17:00 - 20:30` create a div with two time elements
-- Times ending with `?` are wrapped in a div with class `ost-date`
+- Time ranges create a div with two time elements and a separator span
+- DateTime ranges create a div with two time elements for full datetime display
+- Times ending with `?` show the question mark as a separate span element
+- Approximate times with `~` prefix show the tilde as a separate span element
 - Regular times show only the time element with class `ost-date`
 
 Any matching text will be styled with the CSS class `.ost-date`. In Reading Mode the date/time will be displayed to the left of the document. For time-only formats, only the time portion is displayed while the full datetime is stored in the `datetime` attribute.
