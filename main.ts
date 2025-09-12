@@ -21,11 +21,17 @@ export default class SimpleTimelinePlugin extends Plugin {
 					if (child instanceof Text) {
 						const match = extractDateTime(child.textContent || '', this.settings, ctx.sourcePath);
 						if (match.dateTime) {
-							const { modifiedText, dateTime } = match;
+							const { modifiedText, dateTime, isTimeRange, startTime, endTime, separator, hasQuestionMark } = match;
 							child.textContent = modifiedText
 
 							if (previousElDateTime !== dateTime) {
-								insertTimeElement(dateTime, child);
+								insertTimeElement(dateTime, child, {
+									isTimeRange,
+									startTime,
+									endTime,
+									separator,
+									hasQuestionMark
+								});
 							}
 
 							previousElDateTime = dateTime;

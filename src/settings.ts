@@ -12,6 +12,6 @@ export const DEFAULT_SETTINGS: SimpleTimelineSettings = {
 	enableDateOnlyWithColon: true,
 	enableDateTime: false,
 	enableDateTimeWithColon: true,
-	enableTimeOnly: false,
-	enableTimeOnlyWithColon: false,
+	enableTimeOnly: true,
+	enableTimeOnlyWithColon: true,
 };

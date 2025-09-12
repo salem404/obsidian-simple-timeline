@@ -63,7 +63,7 @@ export class SimpleTimelineSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Time only (16:00)')
-			.setDesc('Recognize time only (requires file name to be in date format)')
+			.setDesc('Recognize time only (requires file name to be in date format, supports single-digit hours)')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.enableTimeOnly)
 				.onChange(async (value) => {
@@ -72,8 +72,8 @@ export class SimpleTimelineSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName('Time only with colon (16:00:)')
-			.setDesc('Recognize time with colon (requires file name to be in date format)')
+			.setName('Time only with colon/question mark (16:00: or 16:00?)')
+			.setDesc('Recognize time with colon or question mark (requires file name to be in date format, supports single-digit hours)')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.enableTimeOnlyWithColon)
 				.onChange(async (value) => {

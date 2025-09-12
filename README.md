@@ -6,17 +6,47 @@ Display a list of dates and times as a timeline in Obsidian.
 
 ## Usage
 
-This plugin will look for text formatted in one of the following ways:
+This plugin will look for text formatted in various datetime formats that you can configure in the plugin settings:
 
+**Date formats:**
+
+```markdown
+- YYYY-MM-DD: <Any text>        (optional)
+- YYYY-MM-DD <Any text>         (optional)
 ```
-- YYYY-MM-DD: <Any text>
-- YYYY-MM-DD MM:SS: <Any text>
+
+**DateTime formats:**
+
+```markdown
+- YYYY-MM-DD HH:MM: <Any text>  (enabled by default)
+- YYYY-MM-DD HH:MM <Any text>   (optional)
 ```
 
-No other date/time formats are currently supported (feel free to open an Issue or PR though).
+**Time-only formats** (require file name to contain a date like `2024-12-31-notes.md`):
 
-Any matching text will be styled with the CSS class `.ost-date`. In Reading Mode the date/time will be displayed to
-the left of the document.
+```markdown
+- HH:MM: <Any text>             (enabled by default)
+- HH:MM? <Any text>             (enabled by default, wrapped in div)
+- HH:MM <Any text>              (enabled by default)
+- HH:MM - HH:MM <Any text>      (time ranges, wrapped in div)
+```
+
+**Note:**
+
+- Single-digit hours are supported (e.g., `5:09`, `0:17`)
+- Time ranges like `17:00 - 20:30` create a div with two time elements
+- Times ending with `?` are wrapped in a div with class `ost-date`
+- Regular times show only the time element with class `ost-date`
+
+Any matching text will be styled with the CSS class `.ost-date`. In Reading Mode the date/time will be displayed to the left of the document. For time-only formats, only the time portion is displayed while the full datetime is stored in the `datetime` attribute.
+
+### Settings
+
+Access the plugin settings to enable/disable specific datetime formats according to your needs. By default, the plugin recognizes:
+
+- Date with colon (YYYY-MM-DD:)
+- DateTime with colon (YYYY-MM-DD HH:MM:)
+- Time-only formats (HH:MM, HH:MM:, HH:MM?)
 
 ## Development
 

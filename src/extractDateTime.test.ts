@@ -122,6 +122,30 @@ describe('extractDateTime', () => {
       expect(modifiedText).toBe('This is a test');
       expect(dateTime).toBe('2024-12-31 16:00');
     });
+
+    it('Should handle single digit hours', () => {
+      const { modifiedText, dateTime } = extractDateTime('5:09 This is a test', settings, '/path/to/2024-12-31-notes.md');
+      expect(modifiedText).toBe('This is a test');
+      expect(dateTime).toBe('2024-12-31 5:09');
+    });
+
+    it('Should handle time ranges', () => {
+      const result = extractDateTime('17:00 - 20:30 This is a meeting', settings, '/path/to/2024-12-31-notes.md');
+      expect(result.modifiedText).toBe('This is a meeting');
+      expect(result.dateTime).toBe('2024-12-31 17:00');
+      expect(result.isTimeRange).toBe(true);
+      expect(result.startTime).toBe('2024-12-31 17:00');
+      expect(result.endTime).toBe('2024-12-31 20:30');
+      expect(result.separator).toBe(' - ');
+    });
+
+    it('Should handle time ranges with different spacing', () => {
+      const result = extractDateTime('9:00-17:00 Work day', settings, '/path/to/2024-12-31-notes.md');
+      expect(result.modifiedText).toBe('Work day');
+      expect(result.isTimeRange).toBe(true);
+      expect(result.startTime).toBe('2024-12-31 9:00');
+      expect(result.endTime).toBe('2024-12-31 17:00');
+    });
   });
 
   describe('When enableTimeOnlyWithColon is true and file has date in name', () => {
@@ -131,6 +155,24 @@ describe('extractDateTime', () => {
       const { modifiedText, dateTime } = extractDateTime('16:00: This is a test', settings, '/path/to/2024-12-31-notes.md');
       expect(modifiedText).toBe('This is a test');
       expect(dateTime).toBe('2024-12-31 16:00');
+    });
+
+    it('Should extract time with question mark and combine with file date', () => {
+      const result = extractDateTime('16:00? This is a test', settings, '/path/to/2024-12-31-notes.md');
+      expect(result.modifiedText).toBe('This is a test');
+      expect(result.dateTime).toBe('2024-12-31 16:00');
+      expect(result.hasQuestionMark).toBe(true);
+    });
+
+    it('Should handle single digit hours', () => {
+      const { modifiedText, dateTime } = extractDateTime('0:17: This is a test', settings, '/path/to/2024-12-31-notes.md');
+      expect(modifiedText).toBe('This is a test');
+      expect(dateTime).toBe('2024-12-31 0:17');
+    });
+
+    it('Should detect question mark flag', () => {
+      const result = extractDateTime('0:17? This might have happened', settings, '/path/to/2024-12-31-notes.md');
+      expect(result.hasQuestionMark).toBe(true);
     });
   });
 
