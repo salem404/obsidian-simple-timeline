@@ -1,11 +1,21 @@
 .ost-date {
-  position: absolute;
-  margin-left: -9.8rem;
-  font-size: 0.8rem;
+  display: inline;
+  position: relative;
+  margin-left: 0;
   font-style: italic;
+}
+
+.is-readable-line-width .ost-date {
   display: flex;
-  height: 24px;
-  align-items: center;
-  width: 16ch;
   justify-content: end;
+  position: absolute;
+  width: 10ch;
+  height: 24px;
+  margin-left: -7rem;
+}
+
+.markdown-embed-content .ost-date {
+  display: inline;
+  position: relative;
+  margin-left: 0;
 }
