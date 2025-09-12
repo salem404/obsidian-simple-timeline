@@ -11,6 +11,7 @@ const TIME_REGEX = /^\d{1,2}:\d{2}(?![:\?\-])/; // Time only, not followed by co
 const TIME_COLON_REGEX = /^\d{1,2}:\d{2}[:\?]/; // Time with colon or question mark
 const TIME_RANGE_REGEX = /^\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2}(\?)?/; // Time range with optional ?
 const APPROXIMATE_REGEX = /^~\s+(\d{4}-\d{2}-\d{2}(?:\s+\d{1,2}:\d{2})?)/; // ~ followed by date or datetime
+const APPROXIMATE_TIME_REGEX = /^~\s+(\d{1,2}:\d{2})/; // ~ followed by time only
 const FILE_DATE_REGEX = /\d{4}-\d{2}-\d{2}/;
 
 function extractDateFromFilename(filePath: string): string | null {
@@ -37,6 +38,8 @@ export function extractDateTime(text: string, settings: SimpleTimelineSettings, 
 	isApproximate?: boolean,
 	approximatePrefix?: string
 } {
+	const fileDate = extractDateFromFilename(filePath || '');
+
 	// Check for approximate dates/times first (~ prefix)
 	const approxMatch = text.match(APPROXIMATE_REGEX);
 	if (approxMatch) {
@@ -47,6 +50,20 @@ export function extractDateTime(text: string, settings: SimpleTimelineSettings, 
 			isApproximate: true,
 			approximatePrefix: approxMatch[0].substring(0, approxMatch[0].indexOf(dateTimeStr))
 		};
+	}
+
+	// Check for approximate time-only (~ HH:MM) - requires file date
+	if ((settings.enableTimeOnly || settings.enableTimeOnlyWithColon) && fileDate) {
+		const approxTimeMatch = text.match(APPROXIMATE_TIME_REGEX);
+		if (approxTimeMatch) {
+			const timeStr = approxTimeMatch[1];
+			return {
+				modifiedText: text.substring(approxTimeMatch[0].length).trimStart(),
+				dateTime: `${fileDate} ${timeStr}`,
+				isApproximate: true,
+				approximatePrefix: approxTimeMatch[0].substring(0, approxTimeMatch[0].indexOf(timeStr))
+			};
+		}
 	}
 
 	// Check for datetime ranges (most specific)
@@ -81,8 +98,6 @@ export function extractDateTime(text: string, settings: SimpleTimelineSettings, 
 	}
 
 	// Check for time range first (most specific for time-only)
-	const fileDate = extractDateFromFilename(filePath || '');
-	
 	if ((settings.enableTimeOnly || settings.enableTimeOnlyWithColon) && fileDate) {
 		const rangeMatch = text.match(TIME_RANGE_REGEX);
 		if (rangeMatch) {

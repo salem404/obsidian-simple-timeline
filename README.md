@@ -41,6 +41,7 @@ This plugin will look for text formatted in various datetime formats that you ca
 ```markdown
 - ~ YYYY-MM-DD <Any text>       (approximate date)
 - ~ YYYY-MM-DD HH:MM <Any text> (approximate datetime)
+- ~ HH:MM <Any text>            (approximate time-only, requires file date)
 ```
 
 **Note:**

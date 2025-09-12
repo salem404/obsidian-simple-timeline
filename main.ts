@@ -14,47 +14,34 @@ export default class SimpleTimelinePlugin extends Plugin {
 		this.addSettingTab(new SimpleTimelineSettingTab(this.app, this));
 
 		this.registerMarkdownPostProcessor((el, ctx) => {
-			let previousElDateTime: string | null = null;
-
-			el.findAll('li:not(li ul li)').forEach((el) => {
-				el.childNodes.forEach((child) => {
+			// Process list items
+			el.findAll('li:not(li ul li)').forEach((listItem) => {
+				let previousElDateTime: string | null = null;
+				
+				// Process direct text nodes in the list item
+				listItem.childNodes.forEach((child) => {
 					if (child instanceof Text) {
-						const match = extractDateTime(child.textContent || '', this.settings, ctx.sourcePath);
-						if (match.dateTime) {
-							const { 
-								modifiedText, 
-								dateTime, 
-								isTimeRange, 
-								isDateTimeRange,
-								startTime, 
-								endTime, 
-								separator, 
-								hasQuestionMark,
-								questionMarkPosition,
-								isApproximate,
-								approximatePrefix
-							} = match;
-							child.textContent = modifiedText
-
-							if (previousElDateTime !== dateTime) {
-								insertTimeElement(dateTime, child, {
-									isTimeRange,
-									isDateTimeRange,
-									startTime,
-									endTime,
-									separator,
-									hasQuestionMark,
-									questionMarkPosition,
-									isApproximate,
-									approximatePrefix
-								});
-							}
-
-							previousElDateTime = dateTime;
+						const result = this.processTextNode(child, ctx.sourcePath, previousElDateTime);
+						if (result) {
+							previousElDateTime = result;
 						} else {
 							previousElDateTime = null;
 						}
 					}
+				});
+
+				// Also process text nodes within p elements (Obsidian sometimes wraps content in p tags)
+				listItem.findAll('p').forEach((pElement) => {
+					pElement.childNodes.forEach((child) => {
+						if (child instanceof Text) {
+							const result = this.processTextNode(child, ctx.sourcePath, previousElDateTime);
+							if (result) {
+								previousElDateTime = result;
+							} else {
+								previousElDateTime = null;
+							}
+						}
+					});
 				});
 			});
 		});
@@ -66,5 +53,42 @@ export default class SimpleTimelinePlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+	}
+
+	private processTextNode(child: Text, sourcePath: string, previousElDateTime: string | null): string | null {
+		const match = extractDateTime(child.textContent || '', this.settings, sourcePath);
+		if (match.dateTime) {
+			const { 
+				modifiedText, 
+				dateTime, 
+				isTimeRange, 
+				isDateTimeRange,
+				startTime, 
+				endTime, 
+				separator, 
+				hasQuestionMark,
+				questionMarkPosition,
+				isApproximate,
+				approximatePrefix
+			} = match;
+			child.textContent = modifiedText
+
+			if (previousElDateTime !== dateTime) {
+				insertTimeElement(dateTime, child, {
+					isTimeRange,
+					isDateTimeRange,
+					startTime,
+					endTime,
+					separator,
+					hasQuestionMark,
+					questionMarkPosition,
+					isApproximate,
+					approximatePrefix
+				});
+			}
+
+			return dateTime;
+		}
+		return null;
 	}
 }

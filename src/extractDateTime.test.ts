@@ -240,6 +240,15 @@ describe('extractDateTime', () => {
       expect(result.dateTime).toBe('2020-10-10 14:30');
       expect(result.isApproximate).toBe(true);
     });
+
+    it('Should handle approximate time-only (~ HH:MM)', () => {
+      const timeSettings: SimpleTimelineSettings = { ...defaultTestSettings, enableTimeOnly: true };
+      const result = extractDateTime('~ 14:30 Something happened around this time', timeSettings, 'notes/2020-10-10.md');
+      expect(result.modifiedText).toBe('Something happened around this time');
+      expect(result.dateTime).toBe('2020-10-10 14:30');
+      expect(result.isApproximate).toBe(true);
+      expect(result.approximatePrefix).toBe('~ ');
+    });
   });
 });
 
