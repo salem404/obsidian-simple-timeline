@@ -6,7 +6,7 @@ import { SimpleTimelineSettingTab } from 'src/settingsTab';
 
 
 export default class SimpleTimelinePlugin extends Plugin {
-	settings: SimpleTimelineSettings;
+	settings: SimpleTimelineSettings = DEFAULT_SETTINGS;
 	async onload() {
 		await this.loadSettings();
 
@@ -69,7 +69,8 @@ export default class SimpleTimelinePlugin extends Plugin {
 				hasQuestionMark,
 				questionMarkPosition,
 				isApproximate,
-				approximatePrefix
+				approximatePrefix,
+				isTimeOnly
 			} = match;
 			child.textContent = modifiedText
 
@@ -84,6 +85,7 @@ export default class SimpleTimelinePlugin extends Plugin {
 					questionMarkPosition,
 					isApproximate,
 					approximatePrefix,
+					isTimeOnly,
 					pElement
 				});
 			}

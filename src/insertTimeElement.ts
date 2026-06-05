@@ -1,3 +1,7 @@
+export function hasDateTimeTimeComponent(dateTime: string): boolean {
+	return /^\d{4}-\d{2}-\d{2}\s+\d{1,2}:\d{2}$/.test(dateTime);
+}
+
 export function insertTimeElement(
 	dateTime: string, 
 	element: Text, 
@@ -11,15 +15,24 @@ export function insertTimeElement(
 		questionMarkPosition?: 'end' | 'both' | 'start',
 		isApproximate?: boolean,
 		approximatePrefix?: string,
+		isTimeOnly?: boolean,
 		pElement?: HTMLElement
 	}
 ) {
 	const parent = element.parentElement;
 	if (!parent) return;
 
+	const hasTimeComponent = hasDateTimeTimeComponent(dateTime);
+	const addTimeOnlyClass = (target: HTMLElement) => {
+		if (options?.isTimeOnly || hasTimeComponent) {
+			target.addClass('ost-time');
+		}
+	};
+
 	// If we have a pElement, we're inside a <p> tag - add the class to the p element and create time inside
 	if (options?.pElement) {
 		options.pElement.addClass('ost-date');
+		addTimeOnlyClass(options.pElement);
 		
 		// Clear the text content and create a time element inside the p
 		element.textContent = '';
@@ -151,6 +164,7 @@ export function insertTimeElement(
 			prepend: true,
 			cls: "ost-date"
 		});
+		addTimeOnlyClass(timeRangeDiv);
 
 		// Create start datetime element
 		timeRangeDiv.createEl("time", {
@@ -185,6 +199,7 @@ export function insertTimeElement(
 			prepend: true,
 			cls: "ost-date"
 		});
+		addTimeOnlyClass(timeRangeDiv);
 
 		// Extract just the time parts for display
 		const startTimeMatch = options.startTime.match(/^\d{4}-\d{2}-\d{2} (\d{1,2}:\d{2})$/);
@@ -226,6 +241,7 @@ export function insertTimeElement(
 			prepend: true,
 			cls: "ost-date"
 		});
+		addTimeOnlyClass(timeDiv);
 
 		// Add the ~ prefix
 		timeDiv.createSpan({
@@ -251,6 +267,7 @@ export function insertTimeElement(
 			prepend: true,
 			cls: "ost-date"
 		});
+		addTimeOnlyClass(timeDiv);
 
 		// Extract just the time part for display if it's a full datetime
 		let displayText = dateTime;
@@ -279,7 +296,7 @@ export function insertTimeElement(
 			displayText = dateTimeMatch[1]; // Show only the time part
 		}
 		
-		parent.createEl("time", {
+		const timeElement = parent.createEl("time", {
 			prepend: true,
 			text: displayText,
 			cls: "ost-date",
@@ -287,5 +304,6 @@ export function insertTimeElement(
 				datetime: dateTime,
 			},
 		});
+		addTimeOnlyClass(timeElement);
 	}
 }

@@ -36,7 +36,8 @@ export function extractDateTime(text: string, settings: SimpleTimelineSettings, 
 	hasQuestionMark?: boolean,
 	questionMarkPosition?: 'end' | 'both' | 'start',
 	isApproximate?: boolean,
-	approximatePrefix?: string
+	approximatePrefix?: string,
+	isTimeOnly?: boolean
 } {
 	const fileDate = extractDateFromFilename(filePath || '');
 
@@ -61,6 +62,7 @@ export function extractDateTime(text: string, settings: SimpleTimelineSettings, 
 				modifiedText: text.substring(approxTimeMatch[0].length).trimStart(),
 				dateTime: `${fileDate} ${timeStr}`,
 				isApproximate: true,
+				isTimeOnly: true,
 				approximatePrefix: approxTimeMatch[0].substring(0, approxTimeMatch[0].indexOf(timeStr))
 			};
 		}
@@ -115,6 +117,7 @@ export function extractDateTime(text: string, settings: SimpleTimelineSettings, 
 				modifiedText: text.substring(fullMatch.length).trimStart(),
 				dateTime: `${fileDate} ${startTime}`, // Primary datetime for the timeline
 				isTimeRange: true,
+				isTimeOnly: true,
 				startTime: `${fileDate} ${startTime}`,
 				endTime: `${fileDate} ${endTime}`,
 				separator: separator,
@@ -193,6 +196,7 @@ export function extractDateTime(text: string, settings: SimpleTimelineSettings, 
 			return {
 				modifiedText: text.replace(match[0], '').trimStart(),
 				dateTime: `${fileDate} ${timeOnly}`,
+				isTimeOnly: true,
 				hasQuestionMark
 			};
 		}
@@ -203,7 +207,8 @@ export function extractDateTime(text: string, settings: SimpleTimelineSettings, 
 		if (match) {
 			return {
 				modifiedText: text.substring(match[0].length).trimStart(),
-				dateTime: `${fileDate} ${match[0]}`
+				dateTime: `${fileDate} ${match[0]}`,
+				isTimeOnly: true
 			};
 		}
 	}

@@ -2,20 +2,88 @@
   display: inline;
   position: relative;
   margin-left: 0;
+  margin-right: 6px;
   font-style: italic;
 }
 
-.is-readable-line-width .ost-date {
-  display: flex;
-  justify-content: end;
-  position: absolute;
-  width: 10ch;
-  height: 24px;
-  margin-left: -7rem;
+.markdown-reading-view {
+  container-name: reading-view;
+  container-type: inline-size;
 }
+
+
 
 .markdown-embed-content .ost-date {
   display: inline;
   position: relative;
   margin-left: 0;
+}
+
+
+.markdown-embed-content p.ost-date {
+  bottom: inherit;
+}
+
+.markdown-embed-content .is-readable-line-width p.ost-date {
+  display: inline;
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  margin-left: 0;
+}
+
+.markdown-embed-content p.ost-date {
+  position: static;
+  margin-left: -12px;
+}
+
+p.ost-date {
+  margin-left: -12px;
+}
+
+.markdown-rendered .list-collapse-indicator {
+  margin-inline-start: -5em;
+  padding-inline-end: 2em;
+
+}
+
+.markdown-rendered time.ost-date:not(.ost-time)~.list-collapse-indicator {
+  margin-inline-start: -7.6em;
+}
+
+@container reading-view (min-width: 1000px) {
+  .is-readable-line-width .ost-date {
+    display: flex;
+    justify-content: end;
+    position: absolute;
+    width: 10ch;
+    height: 24px;
+    margin-left: -7rem;
+  }
+
+  .is-readable-line-width p.ost-date {
+    margin-block: -24px !important;
+  }
+
+  .is-readable-line-width .ost-date {
+    display: flex;
+    justify-content: end;
+    position: absolute;
+    width: 10ch;
+    height: 24px;
+    margin-left: -7rem;
+  }
+
+  .markdown-rendered .list-collapse-indicator,
+  .list-collapse-indicator,
+  .collapse-indicator,
+  .collapse-icon {
+    margin-inline-start: 0em;
+    padding-inline-end: 2em;
+  }
+
+  .markdown-rendered time.ost-date:not(.ost-time)~.list-collapse-indicator {
+    margin-inline-start: 0;
+  }
+
 }
